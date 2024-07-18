@@ -1,19 +1,13 @@
 .PHONY: private_ask,ask,set, build,install,alias-instructions,all
 
-private_ask:
-	go run . diff ~/Desktop/teknasyon-staj/language-learning-api main init
-
 ask:
-	go run . ask diff ${path}	
+	git ai diff ${path}	
 
 set:
-	go run . set key berkay-gpt-turbo
-
-set1:
-	go run . set key berkay-gpt-turboo
-
+	git ai set key gpt-turbo-key
+ 
 rm :
-	go run . rm key berkay-gpt-turboo
+	git ai rm key 
 
 all: 
 	go build -o git-ai .
