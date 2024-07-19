@@ -20,7 +20,7 @@ const (
 	UserRole      = "user"
 	AssistantRole = "assistant"
 
-	temperature = 0.25
+	temperature = 1
 
 	askUrl = "https://api.openai.com/v1/chat/completions"
 
