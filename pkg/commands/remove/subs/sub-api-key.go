@@ -10,7 +10,7 @@ import (
 
 func SubRemoveProfileCommand(storage storage.StorageInterface) *cli.Command {
 	return &cli.Command{
-		Name:   "key",
+		Name:   "profile",
 		Action: newRemoveProfileAction(storage),
 	}
 }
