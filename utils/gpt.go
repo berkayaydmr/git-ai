@@ -9,14 +9,18 @@ import (
 )
 
 var gptEngines = []string{
-	enum.Turbo.String(),
 	enum.Four.String(),
+	enum.Turbo.String(),
 	enum.Third.String(),
-	enum.NotSettled.String(),
+	enum.AskEveryTime.String(),
 }
 
-func GetGptEngine() (enum.GptEngine, error) {
+func GetGptEngine(askEveryTime bool) (enum.GptProfileEngine, error) {
 	for i, v := range gptEngines {
+		if !askEveryTime && v == enum.AskEveryTime.String() {
+			continue
+		}
+
 		TypeWriterEffect(fmt.Sprintf("%d. %s", i+1, v), 50)
 	}
 
@@ -28,19 +32,19 @@ func GetGptEngine() (enum.GptEngine, error) {
 		return "", errors.ErrInvalidSelection
 	}
 
-	return enum.GptEngine(gptEngines[selected-1]), nil
+	return enum.GptProfileEngine(gptEngines[selected-1]), nil
 }
 
-func GetApiKeyModelFromUser(name string) (models.ApiKey, error) {
-	TypeWriterEffect("Enter the API key for the GPT engine:", Faster)
+func GetGptProfileFromUser(name string) (models.Profile, error) {
+	TypeWriterEffect("Enter the API key:", Faster)
 	var apiKey string
 	fmt.Scanln(&apiKey)
 	fmt.Println()
 
-	engine, err := GetGptEngine()
+	engine, err := GetGptEngine(true)
 	if err != nil {
-		return models.ApiKey{}, err
+		return models.Profile{}, err
 	}
 
-	return models.ApiKey{Name: name, Key: apiKey, GptVersion: engine}, nil
+	return models.Profile{Name: name, Key: apiKey, GptEngine: enum.GptProfileEngine(engine.String())}, nil
 }

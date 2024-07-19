@@ -12,7 +12,7 @@ func Command(storage storage.StorageInterface) *cli.Command {
 		Aliases: []string{"s"},
 		Usage:   "Set and save such as api key etc.",
 		Subcommands: []*cli.Command{
-			subs.SubApiKeyCommand(storage),
+			subs.SubProfileCommand(storage),
 		},
 	}
 }

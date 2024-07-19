@@ -12,7 +12,7 @@ func Command(storage storage.StorageInterface) *cli.Command {
 		Aliases: []string{"rm"},
 		Usage:   "Remove something from the storage",
 		Subcommands: []*cli.Command{
-			subs.SubApiKeyRemoveCommand(storage),
+			subs.SubRemoveProfileCommand(storage),
 		},
 	}
 }

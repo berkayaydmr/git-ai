@@ -35,6 +35,9 @@ func newAskDiffAction(storage storage.StorageInterface, gptClient *gpt.Client) c
 			return err
 		}
 
+		// git ai diff main init
+		// git ai diff path/to/repo main init
+
 		var branch1, branch2 string
 		if utils.CheckBranchExist(currDir, repositoryUrl) {
 			branch1 = repositoryUrl
@@ -81,7 +84,7 @@ func newAskDiffAction(storage storage.StorageInterface, gptClient *gpt.Client) c
 			return err
 		}
 
-		apiKeys, err := storage.GetApiKeys()
+		apiKeys, err := storage.GetProfiles()
 		if err != nil {
 			return err
 		}
@@ -109,9 +112,9 @@ func newAskDiffAction(storage storage.StorageInterface, gptClient *gpt.Client) c
 
 const temporaryApiKeyName = "tmp"
 
-func selectApiKeyModel(apiKeys []models.ApiKey) (models.ApiKey, error) {
+func selectApiKeyModel(apiKeys []models.Profile) (models.Profile, error) {
 	if len(apiKeys) == 1 {
-		fmt.Printf(messages.OnlyOneKeyFound, apiKeys[0].Name)
+		fmt.Printf(messages.OnlyProfileFound, apiKeys[0].Name)
 		return apiKeys[0], nil
 	}
 
@@ -120,7 +123,7 @@ func selectApiKeyModel(apiKeys []models.ApiKey) (models.ApiKey, error) {
 	}
 
 	if len(apiKeys) == 0 {
-		utils.TypeWriterEffect(messages.CustomApiKeyOrAdd, utils.Faster)
+		utils.TypeWriterEffect(messages.CustomProfileOrAdd, utils.Faster)
 	}
 
 	fmt.Print("Select an API key: ")
@@ -129,9 +132,9 @@ func selectApiKeyModel(apiKeys []models.ApiKey) (models.ApiKey, error) {
 
 	if selected == 0 {
 		fmt.Println()
-		apiKey, err := utils.GetApiKeyModelFromUser(temporaryApiKeyName)
+		apiKey, err := utils.GetGptProfileFromUser(temporaryApiKeyName)
 		if err != nil {
-			return models.ApiKey{}, err
+			return models.Profile{}, err
 		}
 
 		return apiKey, nil

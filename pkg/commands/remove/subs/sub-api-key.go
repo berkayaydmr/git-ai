@@ -8,21 +8,21 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func SubApiKeyRemoveCommand(storage storage.StorageInterface) *cli.Command {
+func SubRemoveProfileCommand(storage storage.StorageInterface) *cli.Command {
 	return &cli.Command{
 		Name:   "key",
-		Action: newApiKeyRemoveAction(storage),
+		Action: newRemoveProfileAction(storage),
 	}
 }
 
-func newApiKeyRemoveAction(storage storage.StorageInterface) cli.ActionFunc {
+func newRemoveProfileAction(storage storage.StorageInterface) cli.ActionFunc {
 	return func(ctx *cli.Context) error {
 		name := ctx.Args().First()
 		if name == "" {
 			return errors.ErrNameNotProvided
 		}
 
-		err := storage.RemoveApiKey(name)
+		err := storage.RemoveProfile(name)
 		if err != nil {
 			return err
 		}

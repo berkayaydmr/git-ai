@@ -8,7 +8,9 @@ const (
 
 	SelectGptEngine = "Select the GPT Engine:"
 
-	CustomApiKeyOrAdd = "There is no API key, please add one or use custom key option to enter a custom key manually select 0"
+	CustomProfileOrAdd = "There is no profile, please add one or use custom profile option to enter a key and gpt engine manually select 0"
 
-	OnlyOneKeyFound = "Only %s named key found, selected automatically\n"
+	OnlyProfileFound = "Only %s named profile found, selected automatically\n"
+
+	ProfileDetail = "Used gpt profile name: %s, engine: %s"
 )

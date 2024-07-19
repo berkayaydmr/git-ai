@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/berkayaydmr/git-ai/pkg/clients/gpt/models"
@@ -23,9 +24,10 @@ const (
 
 	askUrl = "https://api.openai.com/v1/chat/completions"
 
-	gptApiKey = "sk-proj-vKve7ZBSTxjlse8Fd28BT3BlbkFJQRFjt0t8GNGJ0jcmxkX2"
+	gptApiKey = "sk-proj-laNrsZM3x9KFEqvfrqW4T3BlbkFJk5VLqQJjSLrEg2iED2N4"
 
-	AskDiffQuestion = "By using the diff between the branches, fill the layout"
+	MakeModelSoftwareEngineerCharacter = "You are a software engineer who is working on a project. You are questioning about somethings. You use layout to make comment by using this layout make your work."
+	AskDiffQuestion                    = "Your current task is using layout and differencies between two branches that given to you, making review and comment about it."
 
 	Timeout = time.Minute
 )
@@ -38,10 +40,19 @@ func New() *Client {
 	return &Client{httpClient: &http.Client{}}
 }
 
-func (c *Client) Ask(ctx context.Context, apiKeyModel storagemodels.ApiKey, messages ...string) ([]models.Choice, error) {
+func (c *Client) Ask(ctx context.Context, apiKeyModel storagemodels.Profile, messages ...string) ([]models.Choice, error) {
+	if apiKeyModel.GptEngine == enum.AskEveryTime {
+		engine, err := utils.GetGptEngine(false)
+		if err != nil {
+			return nil, err
+		}
+
+		apiKeyModel.GptEngine = engine
+	}
+
 	var gptMessages []models.Message
 	for _, message := range messages {
-		gptMessages = append(gptMessages, models.Message{Content: message, Role: UserRole})
+		gptMessages = append(gptMessages, splitMessages(message, apiKeyModel.GptEngine.Limit())...)
 	}
 
 	gptAskModel := &models.GptAskModel{
@@ -49,15 +60,27 @@ func (c *Client) Ask(ctx context.Context, apiKeyModel storagemodels.ApiKey, mess
 		Temperature: temperature,
 	}
 
-	if apiKeyModel.GptVersion != enum.NotSettled {
-		gptAskModel.Model = apiKeyModel.GptVersion.String()
+	gptAskModel.Model = apiKeyModel.GptEngine
+
+	tokenCount := 0
+	for _, message := range gptAskModel.Messages {
+		token, err := gptAskModel.Model.Encode(message.Content)
+		if err != nil {
+			continue
+		}
+		tokenCount += token
 	}
+
+	fmt.Println("Token count:", tokenCount)
+
+	gptAskModel.MaxTokens = tokenCount
 
 	buf := new(bytes.Buffer)
 	if err := json.NewEncoder(buf).Encode(gptAskModel); err != nil {
 		return nil, err
 	}
 
+	fmt.Println()
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, askUrl, buf)
 	if err != nil {
 		return nil, err
@@ -77,7 +100,12 @@ func (c *Client) Ask(ctx context.Context, apiKeyModel storagemodels.ApiKey, mess
 	close(stopChannel)
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("\nunexpected status code from gpt: %d", resp.StatusCode)
+		var errResp models.GptErrorResponse
+		if err := json.NewDecoder(resp.Body).Decode(&errResp); err != nil {
+			return nil, err
+		}
+
+		return nil, fmt.Errorf("\nunexpected error from gpt: \n %s \n", errResp.Error.Message)
 	}
 
 	var chatResponse models.ChatReponse
@@ -86,4 +114,33 @@ func (c *Client) Ask(ctx context.Context, apiKeyModel storagemodels.ApiKey, mess
 	}
 
 	return chatResponse.Choices, nil
+}
+
+func splitMessages(text string, maxTokens int) []models.Message {
+	words := strings.Fields(text)
+	var chunks []string
+	var chunk []string
+	var tokenCount int
+
+	for _, word := range words {
+		if tokenCount+len(word) > maxTokens {
+			chunks = append(chunks, strings.Join(chunk, " "))
+			chunk = []string{word}
+			tokenCount = len(word)
+		} else {
+			chunk = append(chunk, word)
+			tokenCount += len(word)
+		}
+	}
+
+	if len(chunk) > 0 {
+		chunks = append(chunks, strings.Join(chunk, " "))
+	}
+
+	var messages []models.Message
+	for _, chunk := range chunks {
+		messages = append(messages, models.Message{Content: chunk, Role: UserRole})
+	}
+
+	return messages
 }

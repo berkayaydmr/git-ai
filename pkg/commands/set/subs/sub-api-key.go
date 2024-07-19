@@ -9,26 +9,26 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func SubApiKeyCommand(storage storage.StorageInterface) *cli.Command {
+func SubProfileCommand(storage storage.StorageInterface) *cli.Command {
 	return &cli.Command{
-		Name:   "key",
-		Action: newApiKeyAction(storage),
+		Name:   "profile",
+		Action: newProfileAction(storage),
 	}
 }
 
-func newApiKeyAction(storage storage.StorageInterface) cli.ActionFunc {
+func newProfileAction(storage storage.StorageInterface) cli.ActionFunc {
 	return func(ctx *cli.Context) error {
 		name := ctx.Args().First()
 		if name == "" {
 			return errors.ErrNameNotProvided
 		}
 
-		apiKeyModel, err := utils.GetApiKeyModelFromUser(name)
+		apiKeyModel, err := utils.GetGptProfileFromUser(name)
 		if err != nil {
 			return err
 		}
 
-		err = storage.NewApiKey(apiKeyModel)
+		err = storage.NewProfile(apiKeyModel)
 		if err != nil {
 			return err
 		}

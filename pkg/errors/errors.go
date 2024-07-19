@@ -10,8 +10,8 @@ var (
 	ErrBranchNotFound           = fmt.Errorf("branch not found")
 	ErrRepositoryDirNotProvided = fmt.Errorf("repository directory not provided")
 
-	ErrNoneOfApiKeysFound = fmt.Errorf("none of the api keys found")
-	ErrApiKeyNotFound     = fmt.Errorf("api key not found")
+	ErrNoProfileFound  = fmt.Errorf("none of the api keys found")
+	ErrProfileNotFound = fmt.Errorf("api key not found")
 
 	ErrInvalidSelection = fmt.Errorf("invalid selection")
 

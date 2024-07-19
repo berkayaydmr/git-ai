@@ -1,9 +1,12 @@
 package models
 
+import "github.com/berkayaydmr/git-ai/pkg/storage/enum"
+
 type GptAskModel struct {
-	Model       string     `json:"model"`
-	Messages    []Message `json:"messages"`
-	Temperature float64    `json:"temperature"`
+	Model       enum.GptProfileEngine `json:"model"`
+	Messages    []Message             `json:"messages"`
+	Temperature float64               `json:"temperature"`
+	MaxTokens   int                   `json:"max_tokens"`
 }
 
 type Message struct {

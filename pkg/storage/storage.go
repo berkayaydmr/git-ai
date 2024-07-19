@@ -3,7 +3,6 @@ package storage
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"os"
 
 	"github.com/berkayaydmr/git-ai/pkg/cryptographer"
@@ -12,13 +11,12 @@ import (
 )
 
 type StorageInterface interface {
-	GetApiKeys() ([]models.ApiKey, error)
-	GetByName(name string) (string, error)
-	GetByGptVersion(version string) (string, error)
-	NewApiKey(apiKeyModel models.ApiKey) error
+	GetProfiles() ([]models.Profile, error)
+	GetProfileByName(name string) (string, error)
+	NewProfile(profileModel models.Profile) error
 	OpenStorage() (*models.Data, error)
 	SaveStorage(data *models.Data) error
-	RemoveApiKey(name string) error
+	RemoveProfile(name string) error
 }
 
 type Storage struct {
@@ -33,23 +31,23 @@ func New(cipher cryptographer.Cryptographer, fileName string) StorageInterface {
 	}
 }
 
-func (s *Storage) RemoveApiKey(name string) error {
+func (s *Storage) RemoveProfile(name string) error {
 	data, err := s.OpenStorage()
 	if err != nil {
 		return err
 	}
 
-	if len(data.ApiKeys) == 0 {
-		return errors.ErrNoneOfApiKeysFound
+	if len(data.Profiles) == 0 {
+		return errors.ErrNoProfileFound
 	}
 
-	if !s.IsApiKeyExistWithName(name) {
-		return errors.ErrApiKeyNotFound
+	if !s.IsProfileExistWithName(name) {
+		return errors.ErrProfileNotFound
 	}
 
-	for i, apiKey := range data.ApiKeys {
-		if apiKey.Name == name {
-			data.ApiKeys = append(data.ApiKeys[:i], data.ApiKeys[i+1:]...)
+	for i, profile := range data.Profiles {
+		if profile.Name == name {
+			data.Profiles = append(data.Profiles[:i], data.Profiles[i+1:]...)
 			break
 		}
 	}
@@ -57,17 +55,17 @@ func (s *Storage) RemoveApiKey(name string) error {
 	return s.SaveStorage(data)
 }
 
-func (s *Storage) IsApiKeyExistWithName(name string) bool {
+func (s *Storage) IsProfileExistWithName(name string) bool {
 	data, err := s.OpenStorage()
 	if err != nil {
 		return false
 	}
 
-	if len(data.ApiKeys) == 0 {
+	if len(data.Profiles) == 0 {
 		return false
 	}
 
-	for _, apiKey := range data.ApiKeys {
+	for _, apiKey := range data.Profiles {
 		if apiKey.Name == name {
 			return true
 		}
@@ -75,76 +73,56 @@ func (s *Storage) IsApiKeyExistWithName(name string) bool {
 
 	return false
 }
-func (s *Storage) GetApiKeys() ([]models.ApiKey, error) {
+func (s *Storage) GetProfiles() ([]models.Profile, error) {
 	data, err := s.OpenStorage()
 	if err != nil {
 		return nil, err
 	}
 
-	if len(data.ApiKeys) == 0 {
-		return []models.ApiKey{}, nil
+	if len(data.Profiles) == 0 {
+		return []models.Profile{}, nil
 	}
 
-	return data.ApiKeys, nil
+	return data.Profiles, nil
 }
 
-func (s *Storage) GetByName(name string) (string, error) {
+func (s *Storage) GetProfileByName(name string) (string, error) {
 	data, err := s.OpenStorage()
 	if err != nil {
 		return "", err
 	}
 
-	if len(data.ApiKeys) == 0 {
-		return "", errors.ErrNoneOfApiKeysFound
+	if len(data.Profiles) == 0 {
+		return "", errors.ErrNoProfileFound
 	}
 
-	if len(data.ApiKeys) == 1 {
-		return data.ApiKeys[0].Key, nil
+	if len(data.Profiles) == 1 {
+		return data.Profiles[0].Key, nil
 	}
 
-	for _, apiKey := range data.ApiKeys {
+	for _, apiKey := range data.Profiles {
 		if apiKey.Name == name {
-			fmt.Println("name", name)
 			return apiKey.Key, nil
 		}
 	}
 
-	return "", errors.ErrApiKeyNotFound
+	return "", errors.ErrProfileNotFound
 }
 
-func (s *Storage) GetByGptVersion(version string) (string, error) {
-	data, err := s.OpenStorage()
-	if err != nil {
-		return "", err
-	}
-
-	if len(data.ApiKeys) == 0 {
-		return "", errors.ErrNoneOfApiKeysFound
-	}
-
-	for _, apiKey := range data.ApiKeys {
-		if apiKey.GptVersion.String() == version {
-			return apiKey.Key, nil
-		}
-	}
-
-	return "", errors.ErrApiKeyNotFound
-}
-
-func (s *Storage) NewApiKey(apiKeyModel models.ApiKey) error {
+func (s *Storage) NewProfile(apiKeyModel models.Profile) error {
 	data, err := s.OpenStorage()
 	if err != nil {
 		return err
 	}
 
-	if s.IsApiKeyExistWithName(apiKeyModel.Name) {
+	if s.IsProfileExistWithName(apiKeyModel.Name) {
 		return errors.ErrApiKeyNameExists
 	}
 
-	if len(data.ApiKeys) == 0 {
-		data.ApiKeys = []models.ApiKey{apiKeyModel}
+	if len(data.Profiles) == 0 {
+		data.Profiles = []models.Profile{apiKeyModel}
 	} else {
-		data.ApiKeys = append(data.ApiKeys, apiKeyModel)
+		data.Profiles = append(data.Profiles, apiKeyModel)
 	}
 
 	if err := s.SaveStorage(data); err != nil {
@@ -157,7 +135,6 @@ func (s *Storage) NewApiKey(apiKeyModel models.ApiKey) error {
 func (s *Storage) OpenStorage() (*models.Data, error) {
 	file, err := os.OpenFile(s.StorageFile, os.O_RDONLY|os.O_CREATE, 0644)
 	if err != nil {
-		fmt.Println("98")
 		return nil, err
 	}
 
@@ -175,7 +152,6 @@ func (s *Storage) OpenStorage() (*models.Data, error) {
 	buf := make([]byte, 1024)
 	n, err := file.Read(buf)
 	if err != nil {
-		fmt.Println("110")
 		return nil, err
 	}
 
