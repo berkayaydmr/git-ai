@@ -24,12 +24,10 @@ const (
 
 	askUrl = "https://api.openai.com/v1/chat/completions"
 
-	gptApiKey = "sk-proj-laNrsZM3x9KFEqvfrqW4T3BlbkFJk5VLqQJjSLrEg2iED2N4"
-
 	MakeModelSoftwareEngineerCharacter = "You are a software engineer who is working on a project. You are questioning about somethings. You use layout to make comment by using this layout make your work."
-	AskDiffQuestion                    = "Your current task is using layout and differencies between two branches that given to you, making review and comment about it."
-
-	Timeout = time.Minute
+	AskDiffQuestion                    = "You will share your ideas and information using layout in layout variables names will be fill and its represented with {{name}}. Fill the blanks with the correct answers and make your comments."
+	RepositoryAndBranchNames           = "Repository name: %s\n Branches: %s, %s"
+	Timeout                            = time.Minute
 )
 
 type Client struct {

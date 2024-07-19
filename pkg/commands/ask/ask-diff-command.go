@@ -98,7 +98,7 @@ func newAskDiffAction(storage storage.StorageInterface, gptClient *gpt.Client) c
 
 		gptContext, cancel := context.WithTimeout(context.Background(), gpt.Timeout)
 		defer cancel()
-		choies, err := gptClient.Ask(gptContext, selectedApiKey, gpt.AskDiffQuestion, diff, string(layoutFile))
+		choies, err := gptClient.Ask(gptContext, selectedApiKey, gpt.MakeModelSoftwareEngineerCharacter, fmt.Sprintf(gpt.RepositoryAndBranchNames, repositoryUrl, branch1, branch2), gpt.AskDiffQuestion, diff, string(layoutFile))
 		if err != nil {
 			return err
 		}
