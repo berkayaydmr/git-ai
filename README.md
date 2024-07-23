@@ -10,13 +10,13 @@ This is a simple project that uses GPT to get a review of the difference between
     then move the binary and layout to the bin directory with the following command
     ```
     sudo mv git-ai /usr/local/bin
-    sudo mv review-layout.txt /usr/local/bin
+    sudo cp -r git-ai-storage /usr/local/bin
     ```
     after that make alias for the binary with the following command
     ```
     alias git-ai='/usr/local/bin/git-ai'
     ```
-    or you can use makefile for this `make all` command.
+    or you can use makefile for this `make build` command.
 
 3. GPT API key and gpt engine version you can save(encrypted) your api key and gpt version  with the following command
     ```

@@ -1,4 +1,4 @@
-.PHONY: private_ask,ask,set, build,install,alias-instructions,all
+.PHONY: private_ask,ask,set, build,install,alias-instruction
 
 ask:
 	git ai diff ${path}	
@@ -9,7 +9,7 @@ set:
 rm :
 	git ai rm key 
 
-all: 
+build: 
 	go build -o git-ai .
 	sudo mv git-ai /usr/local/bin
 	sudo cp -r git-ai-storage /usr/local/bin
