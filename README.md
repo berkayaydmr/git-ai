@@ -20,7 +20,7 @@ This is a simple project that uses GPT to get a review of the difference between
 
 3. GPT API key and gpt engine version you can save(encrypted) your api key and gpt version  with the following command
     ```
-    git ai set key NAME_FOR_KEY API_KEY
+    git ai set profile NAME_FOR_KEY
     ```
 
 4. `CRYPTOGRAPHER_KEY` environment variable for encryption and decryption of the api key should be set
