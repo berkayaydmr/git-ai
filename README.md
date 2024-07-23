@@ -60,8 +60,8 @@ This is a simple project that uses GPT to get a review of the difference between
 
 ## Commands
 - `git ai diff /path/to/repo branch1 branch2` : This command is used to get the difference between two branches of a git repository
-- `git ai set key nameforkey` : This command is used to save the api key and gpt version for future use
-- `git ai remove key nameforkey` : This command is used to remove the saved api key and gpt version
+- `git ai set profile nameforkey` : This command is used to save the api key and gpt version for future use
+- `git ai remove profile nameforkey` : This command is used to remove the saved api key and gpt version
 
 ## Example
 inputs are pointed with `->`
