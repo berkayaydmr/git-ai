@@ -1,0 +1,14 @@
+{{repository_name}} {{last commit from first branch}} to {{last commit from second branch}} ({{number of commits}} commits)
+{{number of files changed}} files changed, {{number of insertions}} insertions(+), {{number of deletions}} deletions(-)
+
+The following changes were made:
+- {{filename}}
+    - {{description}}:
+        - {{change description and line number}}
+
+{{make your review here and provide feedback}}
+
+PR Name Suggestion: {{suggest pr name}}
+
+{{these are instructions dont send them as response, all text should be just string dont use style or html tags when you fill the template dont use '{{}}' anymore, 
+to make new line use '\n' and to make space use ' ', DO NOT ADD NOTES OR COMMENTS TO THE TEMPLATE, use tabs and indentations to make the text more readable.}}

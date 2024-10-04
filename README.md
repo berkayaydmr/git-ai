@@ -10,17 +10,17 @@ This is a simple project that uses GPT to get a review of the difference between
     then move the binary and layout to the bin directory with the following command
     ```
     sudo mv git-ai /usr/local/bin
-    sudo mv review-layout.txt /usr/local/bin
+    sudo cp -r git-ai-storage /usr/local/bin
     ```
     after that make alias for the binary with the following command
     ```
     alias git-ai='/usr/local/bin/git-ai'
     ```
-    or you can use makefile for this `make all` command.
+    or you can use makefile for this `make build` command.
 
 3. GPT API key and gpt engine version you can save(encrypted) your api key and gpt version  with the following command
     ```
-    git ai set key NAME_FOR_KEY API_KEY
+    git ai set profile NAME_FOR_KEY
     ```
 
 4. `CRYPTOGRAPHER_KEY` environment variable for encryption and decryption of the api key should be set
@@ -60,8 +60,8 @@ This is a simple project that uses GPT to get a review of the difference between
 
 ## Commands
 - `git ai diff /path/to/repo branch1 branch2` : This command is used to get the difference between two branches of a git repository
-- `git ai set key nameforkey` : This command is used to save the api key and gpt version for future use
-- `git ai remove key nameforkey` : This command is used to remove the saved api key and gpt version
+- `git ai set profile nameforkey` : This command is used to save the api key and gpt version for future use
+- `git ai remove profile nameforkey` : This command is used to remove the saved api key and gpt version
 
 ## Example
 inputs are pointed with `->`
